@@ -159,9 +159,8 @@
         .image-wrapper {
             position: relative;
             width: 100%;
-            /* REPLACED FIXED HEIGHT WITH ASPECT RATIO */
             aspect-ratio: 2/3; 
-            height: auto; /* Scales automatically */
+            height: auto; 
             
             background: rgba(255, 255, 255, 0.1);
             border-radius: 24px;
@@ -475,44 +474,45 @@
             padding: 12px;
         }
 
-        /* --- MOBILE RESPONSIVE LOGIC --- */
+        /* --- MOBILE RESPONSIVE --- */
         .mobile-images-container { display: none; }
 
         @media (max-width: 1024px) {
             .hero {
-                padding: 1rem 0;
+                /* Changed to flex-start to move content UP */
+                align-items: flex-start;
+                padding-top: 3.5rem; /* Reduced top padding */
+                padding-bottom: 2.5rem;
             }
 
             .hero-container {
                 grid-template-columns: 1fr;
-                gap: 2rem;
-                padding: 1rem;
+                gap: 2rem; /* Reduced Gap */
+                padding: 0 1rem;
             }
 
             .hero-image.left, .hero-image.right { display: none; }
 
             .hero-content {
                 order: 1; 
+                padding: 0; /* Remove side padding */
             }
 
-            /* --- SIDE-BY-SIDE Images (Left Right) --- */
             .mobile-images-container {
                 display: grid;
-                grid-template-columns: 1fr 1fr; /* Force 2 columns */
+                grid-template-columns: 1fr 1fr; 
                 gap: 12px;
                 width: 100%;
-                margin: 2rem 0;
+                margin: 1.5rem 0; /* Reduced Margin */
             }
             
-            /* Aspect Ratio scaling here too */
             .mobile-images-container .image-wrapper {
-                /* No fixed height, use aspect-ratio to shrink with px */
                 aspect-ratio: 2/3;
                 height: auto;
                 border-radius: 16px;
             }
 
-            /* --- Centered Mobile Menu --- */
+            /* --- Centered Menu --- */
             .nav-links {
                 position: fixed;
                 top: 70px;
@@ -522,12 +522,9 @@
                 background: rgba(255, 255, 255, 0.98);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
-                
-                /* CENTERING LOGIC */
                 justify-content: center;
                 align-items: center;
                 text-align: center;
-                
                 padding: 2rem;
                 transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: none;
@@ -538,28 +535,53 @@
 
             .preview-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
             }
         }
 
-        /* --- ONLY STACK AT VERY SMALL SIZES (Under 200px) --- */
-        @media (max-width: 200px) {
-            .mobile-images-container {
-                grid-template-columns: 1fr; /* Stack only here */
-            }
-        }
-
+        /* --- TIGHTER SPACING FOR PHONES --- */
         @media (max-width: 480px) {
-            .hero-title { font-size: 2.2rem; }
+            .hero-title { 
+                font-size: 2.2rem; 
+                margin-bottom: 0.25rem; /* Tight margin */
+            }
             
-            /* Keep 2 columns even on phones, just ensure gap is managed */
+            .hero-subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem; /* Tight margin */
+            }
+
+            .hero-description {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem; /* Tight margin */
+            }
+
             .mobile-images-container {
                 gap: 0.8rem;
+                margin: 1.5rem 0;
             }
 
-            .cta-buttons { flex-direction: column; width: 100%; }
-            .btn { width: 100%; justify-content: center; }
+            .cta-buttons { flex-direction: column; width: 100%; gap: 1.5rem; }
+            .btn { width: 100%; justify-content: center; padding: 0.8rem 1.5rem; }
             
-            .preview-grid { grid-template-columns: 1fr; }
+            .preview-grid { grid-template-columns: 1fr; gap: 1rem; }
+            
+            /* Reduce section padding for compact feel */
+            .features, .content-preview, .copyright-notice, footer {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+            
+            .section-title {
+                margin-bottom: 2rem;
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 200px) {
+            .mobile-images-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
