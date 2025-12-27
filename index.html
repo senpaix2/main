@@ -6,6 +6,12 @@
     <title>Sanskari Balak Official - Exclusive Premium Content</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     
+    <!-- Preload Critical Images -->
+    <link rel="preload" as="image" href="s1.png">
+    <link rel="preload" as="image" href="s2.png">
+    <link rel="preload" as="image" href="logo.jpg">
+    <link rel="preload" as="image" href="Telegram_logo.png">
+    
     <style>
         * {
             margin: 0;
@@ -28,6 +34,55 @@
             line-height: 1.6;
             color: var(--text-dark);
             overflow-x: hidden;
+            font-display: swap;
+        }
+
+        /* Image Loading Optimization */
+        img {
+            content-visibility: auto;
+        }
+
+        /* Skeleton Loader */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 20px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Image Container with Aspect Ratio */
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .image-wrapper::before {
+            content: '';
+            display: block;
+            padding-top: 128.57%; /* 450/350 = 1.2857 aspect ratio */
+        }
+
+        .image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-wrapper img.loaded {
+            opacity: 1;
         }
 
         /* Navigation */
@@ -40,6 +95,7 @@
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             transition: all 0.3s ease;
+            will-change: transform;
         }
 
         nav.scrolled {
@@ -151,23 +207,17 @@
 
         .hero-image {
             position: relative;
-            animation: float 3s ease-in-out infinite;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .hero-image img {
-            width: 350px;
-            height: 450px;
-            object-fit: cover;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
+        .hero-image.float-loaded {
+            animation: float 3s ease-in-out infinite;
         }
 
-        .hero-image img:hover {
-            transform: scale(1.05);
+        .hero-image .image-wrapper::before {
+            padding-top: 128.57%; /* 450/350 aspect ratio */
         }
 
         @keyframes float {
@@ -224,6 +274,7 @@
             align-items: center;
             gap: 0.5rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            will-change: transform;
         }
 
         .btn-primary {
@@ -265,6 +316,13 @@
             background-clip: text;
         }
 
+        .content-preview .section-title {
+            color: #FFD700 !important;
+            background: none !important;
+            -webkit-text-fill-color: #FFD700 !important;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
         .features-grid {
             max-width: 1200px;
             margin: 0 auto;
@@ -280,6 +338,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             text-align: center;
+            will-change: transform;
         }
 
         .feature-card:hover {
@@ -334,6 +393,7 @@
             text-align: center;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            will-change: transform;
         }
 
         .preview-card:hover {
@@ -434,6 +494,7 @@
             z-index: 999;
             text-decoration: none;
             padding: 8px;
+            will-change: transform;
         }
 
         .telegram-btn img {
@@ -466,6 +527,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 999;
+            will-change: transform, opacity;
         }
 
         .scroll-top.visible {
@@ -495,12 +557,10 @@
                 padding: 2rem 1rem;
             }
 
-            /* Hide desktop images */
             .hero-image {
                 display: none;
             }
 
-            /* Show mobile images container */
             .mobile-images-container {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -510,13 +570,8 @@
                 padding: 0 0.5rem;
             }
 
-            .mobile-images-container img {
-                width: 100%;
-                height: 300px;
-                object-fit: cover;
-                object-position: center;
-                border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            .mobile-images-container .image-wrapper::before {
+                padding-top: 133.33%; /* 300/225 aspect ratio for mobile */
             }
 
             .hero-content {
@@ -697,10 +752,6 @@
             .mobile-images-container {
                 padding: 0 0.25rem;
             }
-
-            .mobile-images-container img {
-                height: 260px;
-            }
         }
 
         @media (max-width: 400px) {
@@ -720,10 +771,6 @@
                 grid-template-columns: 1fr;
                 padding: 0;
             }
-
-            .mobile-images-container img {
-                height: 320px;
-            }
         }
 
         /* Animations */
@@ -741,6 +788,11 @@
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out;
         }
+
+        /* Loading State */
+        .loading {
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -748,15 +800,14 @@
     <nav id="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="logo.jpg" alt="Logo">
+                <img src="logo.jpg" alt="Logo" loading="eager">
                 <span>Sanskari Balak</span>
             </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="https://t.me/+iVcL2lRfoNsyNmNl" target="_blank">Preview</a></li>
+                <li><a href="#preview">Preview</a></li>
                 <li><a href="https://t.me/sanskarixowner" target="_blank">Contact</a></li>
-                <li><a href="https://t.me/sanskari_x699" target="_blank">Get Premium</a></li>
             </ul>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         </div>
@@ -767,7 +818,9 @@
         <div class="hero-container">
             <!-- Desktop Layout: Image Left -->
             <div class="hero-image left">
-                <img src="s1.png" alt="Premium Content 1">
+                <div class="image-wrapper skeleton">
+                    <img src="s1.png" alt="Premium Content 1" loading="eager" decoding="async">
+                </div>
             </div>
             
             <!-- Content -->
@@ -775,10 +828,14 @@
                 <h1 class="hero-title">SANSKARI BALAK OFFICIAL</h1>
                 <h2 class="hero-subtitle">Exclusive Premium Content</h2>
                 
-                <!-- Mobile Images Container (shown only on mobile) -->
+                <!-- Mobile Images Container -->
                 <div class="mobile-images-container">
-                    <img src="s1.png" alt="Premium Content 1">
-                    <img src="s2.png" alt="Premium Content 2">
+                    <div class="image-wrapper skeleton">
+                        <img src="s1.png" alt="Premium Content 1" loading="eager" decoding="async">
+                    </div>
+                    <div class="image-wrapper skeleton">
+                        <img src="s2.png" alt="Premium Content 2" loading="eager" decoding="async">
+                    </div>
                 </div>
                 
                 <p class="hero-description">
@@ -796,14 +853,16 @@
 
             <!-- Desktop Layout: Image Right -->
             <div class="hero-image right">
-                <img src="s2.png" alt="Premium Content 2">
+                <div class="image-wrapper skeleton">
+                    <img src="s2.png" alt="Premium Content 2" loading="eager" decoding="async">
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
     <section class="features" id="features">
-        <h2 class="section-title">Why Choose Premium?</h2>
+        <h2 class="section-title">Why Choose Us?</h2>
         <div class="features-grid">
             <div class="feature-card fade-in-up">
                 <div class="feature-icon">🎬</div>
@@ -814,17 +873,37 @@
             </div>
             <div class="feature-card fade-in-up">
                 <div class="feature-icon">⚡</div>
-                <h3 class="feature-title">Daily Updates</h3>
+                <h3 class="feature-title">Instant Updates</h3>
                 <p class="feature-description">
-                    Get new content drops Everyday and special releases Exclusicly for premium members
+                    Get instant notifications for new content drops and special releases
                 </p>
             </div>
-
+            <div class="feature-card fade-in-up">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Private & Secure</h3>
+                <p class="feature-description">
+                    Your privacy is our priority with secure access and encrypted content
+                </p>
+            </div>
+            <div class="feature-card fade-in-up">
+                <div class="feature-icon">💎</div>
+                <h3 class="feature-title">VIP Access</h3>
+                <p class="feature-description">
+                    Join an exclusive community of members with special privileges
+                </p>
+            </div>
+            <div class="feature-card fade-in-up">
+                <div class="feature-icon">📱</div>
+                <h3 class="feature-title">Mobile Friendly</h3>
+                <p class="feature-description">
+                    Access content seamlessly on any device, anywhere, anytime
+                </p>
+            </div>
             <div class="feature-card fade-in-up">
                 <div class="feature-icon">🎁</div>
                 <h3 class="feature-title">Bonus Content</h3>
                 <p class="feature-description">
-                    Get content of all types including videos, images, and more as bonus for premium members
+                    Receive special bonus materials and exclusive behind-the-scenes content
                 </p>
             </div>
         </div>
@@ -832,7 +911,7 @@
 
     <!-- Content Preview Section -->
     <section class="content-preview" id="preview">
-       <h2 class="section-title" style="color: #4fd1c5;">Platform Statistics</h2>
+        <h2 class="section-title">Platform Statistics</h2>
         <div class="preview-grid">
             <div class="preview-card">
                 <div class="preview-number">10K+</div>
@@ -873,7 +952,7 @@
                 <h3>About Us</h3>
                 <p>
                     Sanskari Balak Official provides exclusive premium content for our dedicated community. 
-                    Join thousands of satisfied members enjoying high-quality premium content Everyday.
+                    Join thousands of satisfied members enjoying high-quality updates daily.
                 </p>
             </div>
             <div class="footer-section">
@@ -888,15 +967,50 @@
         </div>
     </footer>
 
-    <!-- Fixed Telegram Button (Right) -->
+    <!-- Fixed Telegram Button -->
     <a href="https://t.me/sanskari_x699" class="telegram-btn" target="_blank" title="Join our Telegram">
-        <img src="Telegram_logo.png" alt="Telegram">
+        <img src="Telegram_logo.png" alt="Telegram" loading="lazy">
     </a>
 
-    <!-- Scroll to Top Button (Left) -->
+    <!-- Scroll to Top Button -->
     <div class="scroll-top" id="scrollTop">↑</div>
 
     <script>
+        // Optimized Image Loading
+        function handleImageLoad() {
+            const images = document.querySelectorAll('.image-wrapper img');
+            
+            images.forEach(img => {
+                if (img.complete) {
+                    img.classList.add('loaded');
+                    img.parentElement.classList.remove('skeleton');
+                    if (img.closest('.hero-image')) {
+                        img.closest('.hero-image').classList.add('float-loaded');
+                    }
+                } else {
+                    img.addEventListener('load', function() {
+                        this.classList.add('loaded');
+                        this.parentElement.classList.remove('skeleton');
+                        if (this.closest('.hero-image')) {
+                            this.closest('.hero-image').classList.add('float-loaded');
+                        }
+                    });
+                    
+                    img.addEventListener('error', function() {
+                        this.parentElement.classList.remove('skeleton');
+                        console.error('Image failed to load:', this.src);
+                    });
+                }
+            });
+        }
+
+        // Run on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', handleImageLoad);
+        } else {
+            handleImageLoad();
+        }
+
         // Mobile menu toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const navLinks = document.getElementById('navLinks');
@@ -914,26 +1028,41 @@
             });
         });
 
-        // Navbar scroll effect
+        // Navbar scroll effect - throttled
         const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
+        let scrolling = false;
 
-        // Scroll to top button
-        const scrollTopBtn = document.getElementById('scrollTop');
-        
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                scrollTopBtn.classList.add('visible');
-            } else {
-                scrollTopBtn.classList.remove('visible');
+            if (!scrolling) {
+                window.requestAnimationFrame(() => {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                    scrolling = false;
+                });
+                scrolling = true;
             }
-        });
+        }, { passive: true });
+
+        // Scroll to top button - throttled
+        const scrollTopBtn = document.getElementById('scrollTop');
+        let scrollingTop = false;
+
+        window.addEventListener('scroll', () => {
+            if (!scrollingTop) {
+                window.requestAnimationFrame(() => {
+                    if (window.scrollY > 300) {
+                        scrollTopBtn.classList.add('visible');
+                    } else {
+                        scrollTopBtn.classList.remove('visible');
+                    }
+                    scrollingTop = false;
+                });
+                scrollingTop = true;
+            }
+        }, { passive: true });
 
         scrollTopBtn.addEventListener('click', () => {
             window.scrollTo({
@@ -956,7 +1085,7 @@
             });
         });
 
-        // Intersection Observer for fade-in animations
+        // Intersection Observer for fade-in animations - optimized
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -967,6 +1096,7 @@
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target); // Stop observing once animated
                 }
             });
         }, observerOptions);
@@ -976,20 +1106,6 @@
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
             observer.observe(el);
-        });
-
-        // Add loading animation for images
-        document.querySelectorAll('img').forEach(img => {
-            img.style.opacity = '0';
-            img.style.transition = 'opacity 0.5s ease-in';
-            
-            if (img.complete) {
-                img.style.opacity = '1';
-            } else {
-                img.addEventListener('load', () => {
-                    img.style.opacity = '1';
-                });
-            }
         });
     </script>
 </body>
